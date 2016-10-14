@@ -3,14 +3,24 @@
 # NOTE: Can be overridden externally.
 #
 
+.DEFAULT_GOAL := all
+
+ifeq ($(OS),Windows_NT)
+PRE_MAKE_ALL_RULE_HOOK:
+	mkdir .dep &
+	mkdir build &
+	mkdir build\obj &
+	mkdir build\lst &
+endif
+
 # Compiler options here.
 ifeq ($(USE_OPT),)
-  USE_OPT = -O2 -ggdb -fomit-frame-pointer -falign-functions=16
+  USE_OPT = -O0 -ggdb -fomit-frame-pointer -falign-functions=16 -std=gnu99
 endif
 
 # C specific options here (added to USE_OPT).
 ifeq ($(USE_COPT),)
-  USE_COPT = 
+  USE_COPT =
 endif
 
 # C++ specific options here (added to USE_OPT).
@@ -25,7 +35,7 @@ endif
 
 # Linker extra options here.
 ifeq ($(USE_LDOPT),)
-  USE_LDOPT = 
+  USE_LDOPT =
 endif
 
 # Enable this if you want link time optimizations (LTO)
@@ -46,7 +56,12 @@ endif
 # If enabled, this option makes the build process faster by not compiling
 # modules not used in the current configuration.
 ifeq ($(USE_SMART_BUILD),)
+ifeq ($(OS),Windows_NT)
+# Smart build doesn't work on windows as it uses 'cat'
+  USE_SMART_BUILD = no
+else
   USE_SMART_BUILD = yes
+endif
 endif
 
 #
@@ -86,7 +101,7 @@ endif
 PROJECT = m3template
 
 # Imported source files and paths
-CHIBIOS = ../../shared/ChibiOS
+CHIBIOS = ../shared/ChibiOS
 # Startup files.
 include $(CHIBIOS)/os/common/ports/ARMCMx/compilers/GCC/mk/startup_stm32f4xx.mk
 # HAL-OSAL files (optional).
@@ -100,7 +115,7 @@ include $(CHIBIOS)/os/rt/ports/ARMCMx/compilers/GCC/mk/port_v7m.mk
 include $(CHIBIOS)/test/rt/test.mk
 
 BOARDSRC=board.c
-BOARDINC=.
+BOARDINC=
 
 # Define linker script file here
 LDSCRIPT= STM32F405xG.ld
@@ -115,8 +130,6 @@ CSRC = $(STARTUPSRC) \
        $(PLATFORMSRC) \
        $(BOARDSRC) \
        $(TESTSRC) \
-       ../../shared/m3can/m3can.c \
-       ../../shared/m3status/m3status.c \
        main.c
 
 # C++ sources that can be compiled in ARM or THUMB mode depending on the global
@@ -184,7 +197,7 @@ AOPT =
 TOPT = -mthumb -DTHUMB
 
 # Define C warning options here
-CWARN = -Wall -Wextra -Werror -Wundef -Wstrict-prototypes
+CWARN = -Wall -Wextra -Wundef -Wstrict-prototypes
 
 # Define C++ warning options here
 CPPWARN = -Wall -Wextra -Wundef

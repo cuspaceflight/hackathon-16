@@ -1,7 +1,5 @@
 #include "ch.h"
 #include "hal.h"
-#include "m3can.h"
-#include "m3status.h"
 
 int main(void) {
 
@@ -17,12 +15,7 @@ int main(void) {
     /* Initialise ChibiOS */
     halInit();
     chSysInit();
-
-    /* Turn on the CAN system and send a packet with our firmware version */
-    can_init(CAN_ID_M3TEMPLATE);
-
-    /* Inside each thread, do this: */
-    /* m3status_set_init(M3TEMPLATE_COMPONENT_BLA); */
+    
 
     while (true) {
         /* Clear the watchdog timer */
