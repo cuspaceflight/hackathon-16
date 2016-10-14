@@ -26,7 +26,7 @@
 /*
     Board identifier
 */
-#define BOARD_
+#define BOARD_M3Template
 #define BOARD_NAME                     "M3Template"
 
 /*
